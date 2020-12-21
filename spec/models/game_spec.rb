@@ -123,4 +123,11 @@ RSpec.describe Game, type: :model do
         to eq game_w_questions.game_questions.first
     end
   end
+
+  # тест возвращает число, равное предыдущему уровню сложности.
+  describe '#previous_level' do
+    it 'return previous level game' do
+      expect(game_w_questions.previous_level).to eq(-1)
+    end
+  end
 end
