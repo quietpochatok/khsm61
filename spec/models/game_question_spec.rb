@@ -35,6 +35,7 @@ RSpec.describe GameQuestion, type: :model do
       expect(game_question.level).to eq game_question.question.level
     end
 
+    # тест на возвращение правильного ключа из метода
     describe '#correct_answer_key' do
       it 'return correct answer' do
         expect(game_question.correct_answer_key).to eq('b')
