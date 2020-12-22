@@ -130,4 +130,27 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.previous_level).to eq(-1)
     end
   end
+
+  describe '#answer_current_question!' do
+    context 'when the answer is correct' do
+      it 'return true if answer is correct' do
+        q = game_w_questions.current_game_question
+        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be_truthy
+      end
+    end
+    context "when the answer is not correct" do
+      it 'return false not correct answer' do
+        q = game_w_questions.current_game_question
+        expect(game_w_questions.answer_current_question!('c')).to be_falsey
+      end
+    end
+
+    context "when the answer is given after the time for answer" do
+      it 'return false on  is timeout' do
+        game_w_questions.created_at = 1.hour.ago
+        q = game_w_questions.current_game_question
+        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be_falsey
+      end
+    end
+  end
 end
