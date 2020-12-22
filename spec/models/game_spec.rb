@@ -135,7 +135,7 @@ RSpec.describe Game, type: :model do
   # где ответ правильный/неправильный/отдан после истечения времени.
   describe '#answer_current_question!' do
     let(:question_with_answers) { game_w_questions.current_game_question }
-    let(:wrong_answer) { %w[a b c d].reject { |answer| answer == question_with_answers.correct_answer_key}.sample }
+    let(:wrong_answer) { %w[a b c d].reject { |answer| answer == question_with_answers.correct_answer_key }.sample }
 
     context 'when the answer is correct' do
       it 'return true if answer is correct' do
