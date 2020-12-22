@@ -131,17 +131,27 @@ RSpec.describe Game, type: :model do
     end
   end
 
+  # группа тестов на метод answer_current_question,
+  # где ответ правильный/неправильный/отдан после истечения времени.
   describe '#answer_current_question!' do
+    let(:question_with_answers) { game_w_questions.current_game_question }
+    let(:wrong_answer) { %w[a b c d].reject { |answer| answer == question_with_answers.correct_answer_key}.sample }
+
     context 'when the answer is correct' do
       it 'return true if answer is correct' do
         q = game_w_questions.current_game_question
-        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be_truthy
+        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be true
+        expect(game_w_questions.finished?).to be false
+        expect(game_w_questions.status).to eq :in_progress
       end
     end
+
     context "when the answer is not correct" do
       it 'return false not correct answer' do
         q = game_w_questions.current_game_question
-        expect(game_w_questions.answer_current_question!('c')).to be_falsey
+        expect(game_w_questions.answer_current_question!(wrong_answer)).to be false
+        expect(game_w_questions.finished?).to be true
+        expect(game_w_questions.status).to eq :fail
       end
     end
 
@@ -149,7 +159,9 @@ RSpec.describe Game, type: :model do
       it 'return false on  is timeout' do
         game_w_questions.created_at = 1.hour.ago
         q = game_w_questions.current_game_question
-        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be_falsey
+        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be false
+        expect(game_w_questions.finished?).to be true
+        expect(game_w_questions.status).to eq :timeout
       end
     end
   end
