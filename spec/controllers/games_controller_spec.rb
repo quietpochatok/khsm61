@@ -13,7 +13,7 @@ RSpec.describe GamesController, type: :controller do
   # создаем новую игру, юзер не прописан, будет создан фабрикой новый
   let(:alien_game) { FactoryGirl.create(:game_with_questions) }
 
-  context 'Anon' do
+  context 'Anon try used action method cont-r Games' do
     # Аноним не может смотреть игру
     it 'kicks from #show' do
       # Вызываем экшен
@@ -29,12 +29,54 @@ RSpec.describe GamesController, type: :controller do
 
     # Аноним не может смотреть игру
     it 'kicks from #create' do
+      # Создадим пачку вопросов
+      generate_questions(15)
+
       # Вызываем экшен
       post :create
+
       # Проверяем ответ
       # статус ответа не равен 200
       expect(response.status).not_to eq(200)
       # Devise должен отправить на логин
+      expect(response).to redirect_to(new_user_session_path)
+      # Во flash должно быть сообщение об ошибке
+      expect(flash[:alert]).to be
+    end
+
+    it 'not #answers for anon' do
+      # Дёргаем экшен answer, передаем параметр params[:letter]
+      put :answer, id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key
+
+      # Вытаскиваем из контроллера поле @game
+      game = assigns(:game)
+
+      # Игра неt
+      expect(game).to be_nil
+
+      # Проверяем ответ
+      # статус ответа не равен 200
+      expect(response.status).not_to eq(200)
+      # Редирект на страницу игры
+      expect(response).to redirect_to(new_user_session_path)
+      # Во flash должно быть сообщение об ошибке
+      expect(flash[:alert]).to be
+    end
+
+    it 'not #take_money for anon' do
+      # Дёргаем экшен answer, передаем параметр params[:letter]
+      put :take_money, id: game_w_questions.id
+
+      # Вытаскиваем из контроллера поле @game
+      game = assigns(:game)
+
+      # Игра неt
+      expect(game).to be_nil
+
+      # Проверяем ответ
+      # статус ответа не равен 200
+      expect(response.status).not_to eq(200)
+      # Редирект на страницу игры
       expect(response).to redirect_to(new_user_session_path)
       # Во flash должно быть сообщение об ошибке
       expect(flash[:alert]).to be
