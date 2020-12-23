@@ -134,7 +134,7 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template('show')
     end
 
-    # Тесты на GamesController, который проверяет случай
+    # Тесты на метод #answer, который проверяет случай
     # "неправильный/правильный ответ игрока".
     describe '#answer' do
       let(:wrong_answer) { %w[a b c d].reject { |answer| answer == game_w_questions.current_game_question.
@@ -142,42 +142,46 @@ RSpec.describe GamesController, type: :controller do
 
       # Тест проверяет поведение контроллера, если юзер ответил
       # на вопрос неверно
-      it 'answers not correct' do
-        # Дёргаем экшен answer, передаем параметр params[:letter]
-        put :answer, id: game_w_questions.id, letter: wrong_answer
-        # Вытаскиваем из контроллера поле @game
-        game = assigns(:game)
+      context 'when the answer is correct' do
+        it 'answers not correct' do
+          # Дёргаем экшен answer, передаем параметр params[:letter]
+          put :answer, id: game_w_questions.id, letter: wrong_answer
+          # Вытаскиваем из контроллера поле @game
+          game = assigns(:game)
 
-        # Игра закончена
-        expect(game.finished?).to be true
+          # Игра закончена
+          expect(game.finished?).to be true
 
-        expect(game.status).to eq :fail
-        # Уровень == 0
-        expect(game.current_level.zero?).to be true
+          expect(game.status).to eq :fail
+          # Уровень == 0
+          expect(game.current_level.zero?).to be true
 
-        # Редирект на страницу игры
-        expect(response).to redirect_to(user_path(user))
-        # Флеш заполнен
-        expect(flash[:alert]).to be # неудачный ответ заполняет flash
+          # Редирект на страницу игры
+          expect(response).to redirect_to(user_path(user))
+          # Флеш заполнен
+          expect(flash[:alert]).to be # неудачный ответ заполняет flash
+        end
       end
 
       # Тест проверяет поведение контроллера, если юзер ответил
       # на вопрос верно
-      it 'answers correct' do
-        # Дёргаем экшен answer, передаем параметр params[:letter]
-        put :answer, id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key
-        # Вытаскиваем из контроллера поле @game
-        game = assigns(:game)
+      context 'when the answer is correct' do
+        it 'answers correct' do
+          # Дёргаем экшен answer, передаем параметр params[:letter]
+          put :answer, id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key
+          # Вытаскиваем из контроллера поле @game
+          game = assigns(:game)
 
-        # Игра не закончена
-        expect(game.finished?).to be_falsey
-        # Уровень больше 0
-        expect(game.current_level).to be > 0
+          # Игра не закончена
+          expect(game.finished?).to be_falsey
+          # Уровень больше 0
+          expect(game.current_level).to be > 0
 
-        # Редирект на страницу игры
-        expect(response).to redirect_to(game_path(game))
-        # Флеш пустой
-        expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
+          # Редирект на страницу игры
+          expect(response).to redirect_to(game_path(game))
+          # Флеш пустой
+          expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
+        end
       end
     end
 
