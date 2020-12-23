@@ -27,13 +27,19 @@ RSpec.describe GamesController, type: :controller do
       expect(flash[:alert]).to be
     end
 
-    # Аноним не может смотреть игру
+    # Аноним не может создать игру
     it 'kicks from #create' do
       # Создадим пачку вопросов
       generate_questions(15)
 
       # Вызываем экшен
       post :create
+
+      # Вытаскиваем из контроллера поле @game
+      game = assigns(:game)
+
+      # Игра неt
+      expect(game).to be_nil
 
       # Проверяем ответ
       # статус ответа не равен 200
@@ -44,6 +50,7 @@ RSpec.describe GamesController, type: :controller do
       expect(flash[:alert]).to be
     end
 
+    # Аноним не может дать ответ
     it 'not #answers for anon' do
       # Дёргаем экшен answer, передаем параметр params[:letter]
       put :answer, id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key
@@ -63,6 +70,7 @@ RSpec.describe GamesController, type: :controller do
       expect(flash[:alert]).to be
     end
 
+    #Аноним не может забрать деньги
     it 'not #take_money for anon' do
       # Дёргаем экшен answer, передаем параметр params[:letter]
       put :take_money, id: game_w_questions.id
