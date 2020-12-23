@@ -26,6 +26,19 @@ RSpec.describe GamesController, type: :controller do
       # Во flash должно быть сообщение об ошибке
       expect(flash[:alert]).to be
     end
+
+    # Аноним не может смотреть игру
+    it 'kicks from #create' do
+      # Вызываем экшен
+      post :create
+      # Проверяем ответ
+      # статус ответа не равен 200
+      expect(response.status).not_to eq(200)
+      # Devise должен отправить на логин
+      expect(response).to redirect_to(new_user_session_path)
+      # Во flash должно быть сообщение об ошибке
+      expect(flash[:alert]).to be
+    end
   end
 
   # группа тестов на экшены контроллера, доступных залогиненным юзерам
@@ -71,7 +84,8 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template('show')
     end
 
-    # Тест проверяет поведение контроллера, если юзер ответил на вопрос верно
+    # Тест проверяет поведение контроллера, если юзер ответил
+    # на вопрос верно
     it 'answers correct' do
       # Дёргаем экшен answer, передаем параметр params[:letter]
       put :answer, id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key
@@ -88,15 +102,49 @@ RSpec.describe GamesController, type: :controller do
       # Флеш пустой
       expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
     end
-  end
 
-  # проверка, что пользовтеля посылают из чужой игры
-  it '#show alien game' do
-    # пробуем зайти на эту игру текущий залогиненным user
-    get :show, id: alien_game.id
+    # юзер берет деньги
+    it 'takes money' do
+      # вручную поднимем уровень вопроса до выигрыша 200
+      game_w_questions.update_attribute(:current_level, 2)
 
-    expect(response.status).not_to eq(200) # статус не 200 ОК
-    expect(response).to redirect_to(root_path)
-    expect(flash[:alert]).to be # во flash должен быть прописана ошибка
+      put :take_money, id: game_w_questions.id
+      game = assigns(:game)
+      expect(game.finished?).to be_truthy
+      expect(game.prize).to eq(200)
+
+      # пользователь изменился в базе, надо в коде перезагрузить!
+      user.reload
+      expect(user.balance).to eq(200)
+
+      expect(response).to redirect_to(user_path(user))
+      expect(flash[:warning]).to be
+    end
+
+    # юзер пытается создать новую игру, не закончив старую
+    it 'try to create second game' do
+      # убедились что есть игра в работе
+      expect(game_w_questions.finished?).to be false
+
+      # отправляем запрос на создание, убеждаемся что новых Game не создалось
+      expect { post :create }.to change(Game, :count).by(0)
+
+      # вытаскиваем из контроллера поле @game
+      game = assigns(:game)
+      expect(game).to be_nil
+
+      expect(response).to redirect_to(game_path(game_w_questions))
+      expect(flash[:alert]).to be
+    end
+
+    # проверка, что пользовтеля посылают из чужой игры
+    it '#show alien game' do
+      # пробуем зайти на эту игру текущий залогиненным user
+      get :show, id: alien_game.id
+
+      expect(response.status).not_to eq(200) # статус не 200 ОК
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to be # во flash должен быть прописана ошибка
+    end
   end
 end
