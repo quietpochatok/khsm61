@@ -7,8 +7,11 @@ RSpec.describe GamesController, type: :controller do
   let(:user) { FactoryGirl.create(:user) }
   # админ
   let(:admin) { FactoryGirl.create(:user, is_admin: true) }
-  # игра с прописанными игровыми вопросами
+  # игра с прописанными игровыми вопросами  и !юзером!
   let(:game_w_questions) { FactoryGirl.create(:game_with_questions, user: user) }
+
+  # создаем новую игру, юзер не прописан, будет создан фабрикой новый
+  let(:alien_game) { FactoryGirl.create(:game_with_questions) }
 
   context 'Anon' do
     # Аноним не может смотреть игру
@@ -85,5 +88,15 @@ RSpec.describe GamesController, type: :controller do
       # Флеш пустой
       expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
     end
+  end
+
+  # проверка, что пользовтеля посылают из чужой игры
+  it '#show alien game' do
+    # пробуем зайти на эту игру текущий залогиненным user
+    get :show, id: alien_game.id
+
+    expect(response.status).not_to eq(200) # статус не 200 ОК
+    expect(response).to redirect_to(root_path)
+    expect(flash[:alert]).to be # во flash должен быть прописана ошибка
   end
 end
