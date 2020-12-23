@@ -142,7 +142,7 @@ RSpec.describe GamesController, type: :controller do
 
       # Тест проверяет поведение контроллера, если юзер ответил
       # на вопрос неверно
-      context 'when the answer is correct' do
+      context 'when the answer is not correct' do
         it 'answers not correct' do
           # Дёргаем экшен answer, передаем параметр params[:letter]
           put :answer, id: game_w_questions.id, letter: wrong_answer
