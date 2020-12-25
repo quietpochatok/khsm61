@@ -29,8 +29,6 @@ RSpec.describe GamesController, type: :controller do
 
     # Аноним не может создать игру
     it 'kicks from #create' do
-      # Создадим пачку вопросов
-      generate_questions(15)
 
       # Вызываем экшен
       post :create
@@ -227,6 +225,47 @@ RSpec.describe GamesController, type: :controller do
       expect(response.status).not_to eq(200) # статус не 200 ОК
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to be # во flash должен быть прописана ошибка
+    end
+
+    # тест на отработку "помощи зала"
+    it 'uses audience help' do
+      # сперва проверяем что в подсказках текущего вопроса пусто
+      expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
+      expect(game_w_questions.audience_help_used).to be_falsey
+
+      # фигачим запрос в контроллен с нужным типом
+      put :help, id: game_w_questions.id, help_type: :audience_help
+      game = assigns(:game)
+
+      # проверяем, что игра не закончилась, что флажок установился, и подсказка записалась
+      expect(game.finished?).to be_falsey
+      expect(game.audience_help_used).to be_truthy
+      expect(game.current_game_question.help_hash[:audience_help]).to be
+      expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
+      expect(response).to redirect_to(game_path(game))
+    end
+
+    # тест на отработку "подсказки 50/50"
+    it 'uses fifty_fifty help' do
+      # сперва проверяем что в подсказках текущего вопроса пусто
+      expect(game_w_questions.current_game_question.help_hash[:fifty_fifty]).not_to be
+      expect(game_w_questions.fifty_fifty_used).to be_falsey
+
+      # фигачим запрос в контроллер с нужным типом
+      put :help, id: game_w_questions.id, help_type: :fifty_fifty
+      game = assigns(:game)
+
+      # проверяем, что игра не закончилась, что флажок установился, и подсказка записалась
+      expect(game.finished?).to be_falsey
+      expect(game.fifty_fifty_used).to be_truthy
+      # теперь проверяем что в подсказках !текущего! вопроса сущ-ет подсказка 50/50
+      expect(game.current_game_question.help_hash[:fifty_fifty]).to be
+      # теперь проверяем что в подсказке присутвует правильный ответ на вопрос
+      expect(game.current_game_question.help_hash[:fifty_fifty]).to include(game.
+        current_game_question.correct_answer_key)
+      # по условию вмещает только 2 вариант ответа
+      expect(game.current_game_question.help_hash[:fifty_fifty].size).to eq(2)
+      expect(response).to redirect_to(game_path(game))
     end
   end
 end
