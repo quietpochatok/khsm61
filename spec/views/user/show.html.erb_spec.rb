@@ -1,13 +1,16 @@
 require 'rails_helper'
 
+# Тест на шаблон users/show.html.erb
 RSpec.describe 'users/show', type: :view do
   let(:user) { FactoryGirl.create(:user, name: 'Вадик', balance: 5000) }
   let(:game) { FactoryGirl.build_stubbed(:game, id: 15, created_at: Time.now, current_level: 10, prize: 1000) }
 
   context 'user/anon see page another user' do
     before(:each) do
+      # Подготовим объект user  для использования в тестах, где он понадобится
+      # обратите внимание, что build_stubbed не создает объект в базе, будьте аккуратнее
       assign(:user, FactoryGirl.build_stubbed(:user, name: 'Вадик', balance: 5000))
-      assign(:game, game )
+      assign(:game, game)
       render
     end
 
