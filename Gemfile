@@ -21,6 +21,13 @@ group :development, :test do
   gem 'shoulda-matchers'
 end
 
+group :test do
+  gem 'capybara'
+  # Этот гем позволяет сохранять и открывать скриншот страницы
+  # с результатом активности юзера
+  gem 'launchy'
+end
+
 group :production do
   # гем, улучшающий вывод логов на Heroku
   # https://devcenter.heroku.com/articles/getting-started-with-rails4#heroku-gems
