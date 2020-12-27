@@ -2,10 +2,12 @@
 require 'rails_helper'
 
 RSpec.feature 'anon see profile users', type: :feature do
-  # Готовим базу: создаём пользователя
+  # Готовим базу: создаём пользователей
+  # просто юзер
   let(:user_another) { FactoryGirl.create :user }
-
+  # юзер которого мы припишем к игре
   let(:user) { FactoryGirl.create(:user, name: 'Вадик', email: 'vadik10@mail.ru') }
+  # создаем игры, чтобы они "отрисовались" в профиле юзера
   let!(:games) do
     [
       FactoryGirl.create(:game, user: user, id: 15, created_at: Time.zone.parse('2016.10.09, 13:00'),
@@ -15,6 +17,7 @@ RSpec.feature 'anon see profile users', type: :feature do
     ]
   end
 
+  # логинимся просто юзером
   before(:each) do
     login_as user_another
   end
@@ -41,6 +44,6 @@ RSpec.feature 'anon see profile users', type: :feature do
     expect(page).to have_content '12'
     expect(page).to have_content '10 000 ₽'
 
-    save_and_open_page
+    #save_and_open_page
   end
 end
