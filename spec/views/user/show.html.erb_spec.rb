@@ -8,7 +8,7 @@ RSpec.describe 'users/show', type: :view do
   context 'user/anon see page another user' do
     before(:each) do
       # Подготовим объект user  для использования в тестах, где он понадобится
-      # обратите внимание, что build_stubbed не создает объект в базе, будьте аккуратнее
+      # !build_stubbed! не создает объект в базе, будьте аккуратнее
       assign(:user, FactoryGirl.build_stubbed(:user, name: 'Вадик', balance: 5000))
       assign(:game, game)
       render
@@ -28,7 +28,6 @@ RSpec.describe 'users/show', type: :view do
   end
 
   context 'sing_in user see self page profile' do
-
     # перед каждым тестом в группе
     before(:each) do
       assign(:user, user)
