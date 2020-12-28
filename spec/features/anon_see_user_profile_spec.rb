@@ -11,9 +11,9 @@ RSpec.feature 'anon see profile users', type: :feature do
   let!(:games) do
     [
       FactoryGirl.create(:game, user: user, id: 15, created_at: Time.zone.parse('2016.10.09, 13:00'),
-                         finished_at: Time.zone.parse('2016.10.09, 13:20'), current_level: 10, prize: 1000),
-      FactoryGirl.create(:game, user: user, id: 30, created_at: Time.zone.parse('2020.12.01, 12:00'),
-                         finished_at: Time.zone.parse('2020.12.01, 12:30'), current_level: 3, prize: 10_000),
+                         finished_at: Time.zone.parse('2016.10.09, 13:20'), current_level: 7, prize: 1000),
+      FactoryGirl.create(:game, user: user, id: 26, created_at: Time.zone.parse('2020.12.01, 04:00'),
+                         finished_at: Time.zone.parse('2020.12.01, 04:21'), current_level: 8, prize: 10_000),
     ]
   end
 
@@ -35,13 +35,13 @@ RSpec.feature 'anon see profile users', type: :feature do
     expect(page).to have_content '15'
     expect(page).to have_content '09 окт., 13:00'
     expect(page).to have_content 'деньги'
-    expect(page).to have_content '10'
+    expect(page).to have_content '7'
     expect(page).to have_content '1 000 ₽'
 
-    expect(page).to have_content '30'
-    expect(page).to have_content '01 дек., 12:00'
+    expect(page).to have_content '26'
+    expect(page).to have_content '01 дек., 04:00'
     expect(page).to have_content 'деньги'
-    expect(page).to have_content '3'
+    expect(page).to have_content '8'
     expect(page).to have_content '10 000 ₽'
   end
 end
