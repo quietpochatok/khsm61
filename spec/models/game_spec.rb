@@ -156,12 +156,22 @@ RSpec.describe Game, type: :model do
     end
 
     context "when the answer is given after the time for answer" do
-      it 'return false on  is timeout' do
+      it 'return false on is timeout' do
         game_w_questions.created_at = 1.hour.ago
         q = game_w_questions.current_game_question
         expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be false
         expect(game_w_questions.finished?).to be true
         expect(game_w_questions.status).to eq :timeout
+      end
+    end
+
+    context 'when the answer is last question' do
+      it 'return true on correct answer last question' do
+        game_w_questions.current_level = Question::QUESTION_LEVELS.max
+        q = game_w_questions.current_game_question
+        expect(game_w_questions.answer_current_question!(q.correct_answer_key)).to be true
+        expect(game_w_questions.finished?).to be true
+        expect(game_w_questions.status).to eq :won
       end
     end
   end

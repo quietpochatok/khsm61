@@ -37,6 +37,7 @@ RSpec.feature 'anon see profile users', type: :feature do
     expect(page).to have_content 'деньги'
     expect(page).to have_content '7'
     expect(page).to have_content '1 000 ₽'
+    has_table?('#users-table table')
 
     expect(page).to have_content '26'
     expect(page).to have_content '01 дек., 04:00'
