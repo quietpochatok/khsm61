@@ -4,14 +4,14 @@ require 'support/my_spec_helper'
 
 RSpec.describe GamesController, type: :controller do
   # обычный пользователь
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { create(:user) }
   # админ
-  let(:admin) { FactoryGirl.create(:user, is_admin: true) }
+  let(:admin) { create(:user, is_admin: true) }
   # игра с прописанными игровыми вопросами  и !юзером!
-  let(:game_w_questions) { FactoryGirl.create(:game_with_questions, user: user) }
+  let(:game_w_questions) { create(:game_with_questions, user: user) }
 
   # создаем новую игру, юзер не прописан, будет создан фабрикой новый
-  let(:alien_game) { FactoryGirl.create(:game_with_questions) }
+  let(:alien_game) { create(:game_with_questions) }
 
   context 'Anon try used action method cont-r Games' do
     # Аноним не может смотреть игру

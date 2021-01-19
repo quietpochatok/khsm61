@@ -6,8 +6,8 @@ RSpec.describe 'users/index', type: :view do
     # имитируя действие контроллера, который эти данные будет брать из базы
     # Обратите внимание, что мы объекты в базу не кладем, т.к. пишем FactoryGirl.build_stubbed
     assign(:users, [
-      FactoryGirl.build_stubbed(:user, name: 'Вадик', balance: 5000),
-      FactoryGirl.build_stubbed(:user, name: 'Миша', balance: 3000),
+      build_stubbed(:user, name: 'Вадик', balance: 5000),
+      build_stubbed(:user, name: 'Миша', balance: 3000),
     ])
 
     render
