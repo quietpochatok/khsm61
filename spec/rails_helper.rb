@@ -48,8 +48,8 @@ RSpec.configure do |config|
   # Подключаем девайзовые классы для использвоания в тестах
   # https://github.com/plataformatec/devise#test-helpers
   # https://github.com/plataformatec/devise/issues/4133
-  config.include Devise::TestHelpers, type: :controller
-  config.include Devise::TestHelpers, type: :view
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :view
 
   # Подключаем в фичах специальные хелперы для авторизации
   config.include Warden::Test::Helpers, type: :feature
