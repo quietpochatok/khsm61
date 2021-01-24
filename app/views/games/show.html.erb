@@ -4,16 +4,16 @@
       <%= image_tag asset_path('logo.png'), class: 'game-logo buffer-bottom' %>
     </div>
 
-    <div class="game-question">
+    <div class="game-question" style="">
       <%= render partial: 'game_question', object: @game_question %>
     </div>
   </div>
 
-  <div class="buffer-top-lg">
+  <div class="buffer-top-lg" style="">
     <%= render partial: 'help', object: @game_question.help_hash, locals: {game: @game} %>
   </div>
 
-  <div class="col-sm-3 col-sm-pull-9">
+  <div class="col-lg-12 col-md-12 col-sm-3">
     <ul class="list-group list-group-prizes game-prizes">
       <% Game::PRIZES.reverse.each_with_index do |prize, index| %>
         <li class="list-group-item text-center <%= 'active' if (14 - index == @game.current_level) %>">
